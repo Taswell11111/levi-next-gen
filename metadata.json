@@ -1,0 +1,8 @@
+{
+  "name": "Reebok South Africa Next-Gen",
+  "description": "Remixed official Reebok South Africa digital storefront featuring authentic Classics, Nano training gear, FloatZig runners, and live personal shopper.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
