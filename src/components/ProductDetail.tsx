@@ -45,6 +45,8 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
   const [imgError, setImgError] = useState<boolean>(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState<boolean>(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [showAppBanner, setShowAppBanner] = useState<boolean>(true);
+  const [appDownloadNotice, setAppDownloadNotice] = useState<boolean>(false);
 
   // Ref for thumbnail carousel
   const thumbnailCarouselRef = useRef<HTMLDivElement>(null);
@@ -54,6 +56,53 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
   const [queryEmail, setQueryEmail] = useState<string>('');
   const [queryStep, setQueryStep] = useState<'input' | 'email'>('input');
   const [querySubmitted, setQuerySubmitted] = useState<boolean>(false);
+
+  const renderAppBanner = () => {
+    if (!showAppBanner) return null;
+    return (
+      <div className="mt-6 relative bg-white border border-neutral-200 p-4 sm:p-5 flex items-center justify-start gap-5 sm:gap-6 shadow-sm reebok-cut w-fit max-w-full">
+        <div className="flex flex-col gap-1">
+          <span className="font-display font-extrabold text-xs sm:text-sm tracking-wider uppercase text-neutral-950">
+            GET THE REEBOK APP
+          </span>
+          <p className="text-xs text-neutral-600 font-medium">
+            Exclusive discounts and more!
+          </p>
+          {appDownloadNotice ? (
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 mt-1 rounded border border-emerald-200 inline-block">
+              Redirecting to Reebok South Africa App Store...
+            </span>
+          ) : (
+            <a
+              href="#download-app"
+              onClick={(e) => {
+                e.preventDefault();
+                setAppDownloadNotice(true);
+                setTimeout(() => setAppDownloadNotice(false), 3000);
+              }}
+              className="inline-block text-xs font-bold uppercase tracking-wider text-neutral-900 underline underline-offset-4 hover:text-[#D81C2A] mt-1 transition-colors"
+            >
+              <span className="border-b-2 border-neutral-900 pb-0.5">DOWNLOAD</span>
+            </a>
+          )}
+        </div>
+
+        {/* Brand Tile placed close to the text */}
+        <div className="shrink-0 bg-[#f8f5ee] border border-neutral-300 w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center p-2 shadow-inner">
+          <div className="text-center">
+            <svg viewBox="0 0 70 34" className="w-10 h-5 sm:w-12 sm:h-6 fill-black mx-auto mb-1" aria-hidden="true">
+              <polygon points="8,28 28,4 38,4 20,28" />
+              <polygon points="26,28 64,4 72,4 36,28" />
+              <polygon points="2,21 48,11 45,16 6,24" fill="#D81C2A" />
+            </svg>
+            <span className="font-display font-black text-[9px] sm:text-[10px] tracking-widest text-black block uppercase">
+              REEBOK
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const allImages = [product.image, ...(product.additionalImages || [])];
 
@@ -144,6 +193,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
           <span className="sm:hidden">{isWishlisted ? 'Saved' : 'Save'}</span>
         </button>
       </div>
+
 
       {/* Main PDP Grid: Gallery on Left, Purchase Module on Right */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-4 sm:pt-8 flex flex-col lg:flex-row gap-8 lg:gap-16">
@@ -299,6 +349,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
                 <p className="text-xs sm:text-sm text-neutral-800">{product.techSpecs.closure}</p>
               </div>
             </div>
+            {renderAppBanner()}
           </div>
         </div>
 
@@ -622,6 +673,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
             <p className="text-xs sm:text-sm text-neutral-800">{product.techSpecs.closure}</p>
           </div>
         </div>
+        {renderAppBanner()}
       </section>
 
       {/* Verified Product Reviews Section (Available on both desktop & mobile) */}
@@ -754,6 +806,8 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
         onClose={() => setSizeGuideOpen(false)}
         productName={product.name}
         category={product.category}
+        availableSizes={product.sizesUK.map(s => s.size)}
+        onSelectSize={(size) => setSelectedSize(size)}
       />
     </div>
   );

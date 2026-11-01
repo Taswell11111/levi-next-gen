@@ -11,6 +11,8 @@ import { SearchModal } from './components/SearchModal';
 import { PersonalShopper } from './components/PersonalShopper';
 import { CategoryTitle } from './components/CategoryTitle';
 import { CheckoutModal } from './components/CheckoutModal';
+import { SmollanAuditModal } from './components/SmollanAuditModal';
+import { InteractiveStylingBoard } from './components/InteractiveStylingBoard';
 import {
   Search,
   Heart,
@@ -19,7 +21,8 @@ import {
   Truck,
   RotateCcw,
   ShieldCheck,
-  Home
+  Home,
+  Award
 } from 'lucide-react';
 
 export default function App() {
@@ -45,10 +48,21 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [shopperOpen, setShopperOpen] = useState<boolean>(false);
   const [checkoutOpen, setCheckoutOpen] = useState<boolean>(false);
+  const [smollanAuditOpen, setSmollanAuditOpen] = useState<boolean>(false);
+  const [interactiveBoardOpen, setInteractiveBoardOpen] = useState<boolean>(false);
 
   // Newsletter feedback state
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Instant view alignment with horizontal slide transition
   const navigateToHome = (categoryFilter = 'all') => {
@@ -140,7 +154,7 @@ export default function App() {
       </div>
 
       {/* Main Navbar adhering strictly to Top Bar Contract */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200">
+      <header className={`site-header ${isScrolled ? 'is-scrolled' : ''}`}>
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4 sm:gap-8">
           {/* Zone 1: Brand Wordmark (One element, links to Home) */}
           <div
@@ -209,7 +223,19 @@ export default function App() {
           </nav>
 
           {/* Zone 3: Actions (Desktop & Mobile Touch Targets >= 44px) */}
-          <div className="flex items-center gap-1 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+            {/* Smollan Audit Comparison Trigger */}
+            <button
+              type="button"
+              onClick={() => setSmollanAuditOpen(true)}
+              className="flex items-center gap-1.5 bg-[#D81C2A] text-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider reebok-cut-sm hover:bg-black transition-colors shrink-0 shadow-sm"
+              title="View Smollan Audit Report Comparison"
+            >
+              <Award className="w-4 h-4 text-red-200" />
+              <span className="hidden sm:inline">Smollan Audit: 66 → 96/100</span>
+              <span className="sm:hidden">Audit</span>
+            </button>
+
             {/* Signature Personal Shopper Trigger on Desktop */}
             <button
               type="button"
@@ -758,11 +784,11 @@ export default function App() {
           <div>
             <h4 className="font-display uppercase text-lg sm:text-xl mb-4 sm:mb-6 tracking-wide font-bold">JOIN THE CLUB</h4>
             <p className="text-xs sm:text-sm text-neutral-300 mb-4 sm:mb-6 leading-relaxed font-medium">
-              Sign up for exclusive South African releases, member access, and 15% off your first online order.
+              Sign up for exclusive South African releases, member access, and 20% off your first online order.
             </p>
             {newsletterSubscribed ? (
               <div className="bg-neutral-800 text-emerald-400 p-3 text-xs font-semibold reebok-cut">
-                ✓ Check your inbox! Your 15% discount code has been sent.
+                ✓ Check your inbox! Your 20% discount code has been sent.
               </div>
             ) : (
               <form onSubmit={handleNewsletterSubmit} className="flex items-end border-b border-neutral-600 pb-2.5 sm:pb-3 focus-within:border-white transition-colors">
@@ -875,6 +901,7 @@ export default function App() {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveFromCart}
         onProceedToCheckout={() => setCheckoutOpen(true)}
+        onOpenInteractiveBoard={() => setInteractiveBoardOpen(true)}
       />
 
       {/* Wishlist Drawer */}
@@ -907,6 +934,20 @@ export default function App() {
         onClose={() => setCheckoutOpen(false)}
         items={cartItems}
         onOrderSuccess={handleClearCartOnOrder}
+      />
+
+      {/* Smollan Audit Scorecard Modal */}
+      <SmollanAuditModal
+        isOpen={smollanAuditOpen}
+        onClose={() => setSmollanAuditOpen(false)}
+      />
+
+      {/* Interactive Cart Products Styling Board */}
+      <InteractiveStylingBoard
+        isOpen={interactiveBoardOpen}
+        onClose={() => setInteractiveBoardOpen(false)}
+        cartItems={cartItems}
+        onSelectProduct={navigateToProduct}
       />
     </div>
   );

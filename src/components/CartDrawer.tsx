@@ -9,6 +9,7 @@ interface CartDrawerProps {
   onUpdateQuantity: (productId: string, size: string, quantity: number) => void;
   onRemoveItem: (productId: string, size: string) => void;
   onProceedToCheckout: () => void;
+  onOpenInteractiveBoard?: () => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -17,7 +18,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   items,
   onUpdateQuantity,
   onRemoveItem,
-  onProceedToCheckout
+  onProceedToCheckout,
+  onOpenInteractiveBoard
 }) => {
   if (!isOpen) return null;
 
@@ -180,13 +182,26 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               </span>
             </div>
 
+            {onOpenInteractiveBoard && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenInteractiveBoard();
+                }}
+                className="w-full bg-neutral-900 text-white py-3.5 font-bold uppercase tracking-wider text-xs hover:bg-[#D81C2A] transition-colors reebok-cut flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              >
+                <span>View Interactive Cart Products</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => {
                 onClose();
                 onProceedToCheckout();
               }}
-              className="w-full bg-[#D81C2A] text-white py-4 font-bold uppercase tracking-wider text-xs hover:bg-black transition-colors reebok-cut flex items-center justify-center gap-2 shadow-sm"
+              className="w-full bg-[#D81C2A] text-white py-4 font-bold uppercase tracking-wider text-xs hover:bg-black transition-colors reebok-cut flex items-center justify-center gap-2 shadow-sm cursor-pointer"
             >
               <span>Proceed to Checkout</span>
               <ArrowRight className="w-4 h-4" />
